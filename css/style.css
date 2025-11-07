@@ -1,1 +1,417 @@
+/* General Body and Header */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background-color: #f0f2f5;
+  color: #333;
+}
 
+header {
+  background: #2c3e50; /* Darker blue-grey */
+  color: #fff;
+  text-align: center;
+  padding: 15px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h2, h3, h4 {
+  color: #2c3e50;
+  margin-top: 0;
+}
+
+/* Sidebar */
+#sidebar {
+  width: 220px;
+  background: #fff;
+  height: 100vh;
+  float: left;
+  padding: 15px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box; /* Include padding in width */
+  position: sticky; /* Keeps sidebar visible */
+  top: 0;
+}
+
+#sidebar button {
+  display: block;
+  width: 100%;
+  margin: 8px 0;
+  padding: 12px 10px;
+  cursor: pointer;
+  background-color: #3498db; /* Blue */
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  text-align: left;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#sidebar button:hover {
+  background-color: #2980b9; /* Darker blue on hover */
+  transform: translateX(3px);
+}
+
+#sidebar hr {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 20px 0;
+}
+
+/* Main Content Area */
+#main {
+  margin-left: 230px; /* Adjust based on sidebar width */
+  padding: 20px;
+}
+
+/* Common Box Styles */
+.box {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.hidden {
+  display: none !important; /* Use !important to override other styles */
+}
+
+/* Form Elements */
+input,
+textarea,
+select {
+  padding: 10px;
+  margin: 8px 0;
+  width: calc(100% - 20px); /* Account for padding */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box; /* Include padding in width */
+}
+
+button {
+  padding: 10px 15px;
+  margin: 5px 5px 5px 0;
+  cursor: pointer;
+  background-color: #28a745; /* Green */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #218838; /* Darker green on hover */
+}
+
+/* Specific Button Styles */
+.tabs button {
+  background-color: #007bff; /* Blue */
+}
+.tabs button:hover {
+  background-color: #0056b3;
+}
+
+.tabs button.active {
+  background-color: #0056b3;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+th,
+td {
+  border: 1px solid #eee;
+  padding: 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background-color: #f8f8f8;
+  font-weight: bold;
+  color: #555;
+}
+
+/* Lists (e.g., Cart, Expenses, AEPS) */
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+ul li {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+ul li button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+/* Toast Messages */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: green;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: fadeinout 3s forwards;
+}
+
+@keyframes fadeinout {
+  0% { opacity: 0; transform: translateY(20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(20px); }
+}
+
+/* Search Results */
+.search-results {
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+  background-color: #fff;
+  margin-top: -5px; /* Overlap with input border */
+  margin-bottom: 10px;
+  border-radius: 0 0 5px 5px;
+}
+
+.search-results div {
+  padding: 8px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.search-results div:hover {
+  background-color: #e9e9e9;
+}
+
+.search-results div:last-child {
+  border-bottom: none;
+}
+
+.search-results button {
+  width: calc(100% - 20px);
+  margin: 5px 10px;
+  padding: 8px;
+  background-color: #6c757d; /* Grey */
+}
+
+.search-results button:hover {
+  background-color: #5a6268;
+}
+
+/* Filters for Invoices */
+.filters {
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #eee;
+  background-color: #fdfdfd;
+  border-radius: 5px;
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+  gap: 10px; /* Space between filter elements */
+  align-items: center;
+}
+
+.filters input, .filters button {
+  width: auto; /* Auto-width for filter elements */
+  flex-grow: 1; /* Allow them to grow */
+  min-width: 120px; /* Minimum width for inputs */
+  margin: 0; /* Remove default margin */
+}
+
+/* Ledger Stats */
+#ledgerStats {
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+  border-radius: 8px;
+  line-height: 1.6;
+}
+
+#ledgerStats span {
+  font-weight: bold;
+  color: #3498db;
+}
+
+/* Report Summaries */
+.report-summary {
+  padding: 15px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.report-summary p {
+  margin: 5px 0;
+  font-size: 1.1em;
+  color: #555;
+}
+
+/* Pending Tasks Layout */
+#pendingTasks > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+}
+
+#pendingTasks > div:last-child {
+  border-bottom: none;
+}
+
+#pendingTasks > div > div:first-child {
+  flex: 1;
+  padding-right: 10px;
+}
+
+#pendingTasks > div button {
+  margin-left: 5px;
+  padding: 8px 12px;
+  font-size: 0.9em;
+}
+
+#pendingTasks .manual-task-form {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+#pendingTasks .manual-task-form input,
+#pendingTasks .manual-task-form button {
+  flex-grow: 1;
+  min-width: 150px;
+  margin: 0;
+}
+
+/* Dashboard Grid Styles */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Adjusted min-width */
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.statCard {
+  padding: 15px; /* Increased padding */
+  border-radius: 12px;
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  font-weight: bold;
+  font-size: 12px; /* Adjusted font size */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.statCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.statCard span {
+  font-size: 20px; /* Increased font size */
+  margin-top: 10px; /* Increased margin */
+  font-weight: 600;
+}
+
+/* Color themes */
+.saleCard { background: linear-gradient(135deg,#4caf50,#2e7d32); }        /* Green */
+.monthSaleCard { background: linear-gradient(135deg,#2196f3,#1565c0); }  /* Blue */
+.customerCard { background: linear-gradient(135deg,#9c27b0,#6a1b9a); }  /* Purple */
+.newCustomerCard { background: linear-gradient(135deg,#ff9800,#ef6c00); } /* Orange */
+.pendingTaskCard { background: linear-gradient(135deg,#f44336,#b71c1c); } /* Red */
+.balanceCard { background: linear-gradient(135deg,#795548,#4e342e); }    /* Brown */
+.todayExpenseCard { background: linear-gradient(135deg,#009688,#004d40); } /* Teal */
+.monthExpenseCard { background: linear-gradient(135deg,#607d8b,#37474f); } /* Blue-grey */
+
+
+/* Responsive Design */
+/* PC View → all in single row */
+@media (min-width: 1200px) { /* Adjusted breakpoint for more cards */
+  .dashboard-grid {
+    grid-template-columns: repeat(4, 1fr); /* 4 cards per row for large screens */
+  }
+}
+
+/* Tablet View → 2 cards per row */
+@media (max-width: 1199px) and (min-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(3, 1fr); /* 3 cards per row for tablets */
+  }
+}
+
+/* Mobile View → 1 card per row */
+@media (max-width: 767px) {
+  #sidebar {
+    width: 100%;
+    height: auto;
+    float: none;
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  #sidebar button {
+    margin: 5px 0;
+  }
+  #main {
+    margin-left: 0;
+    padding: 10px;
+  }
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  .filters {
+    flex-direction: column; /* Stack filters vertically on mobile */
+    align-items: stretch;
+  }
+  .filters input, .filters button {
+    width: 100%;
+  }
+  #pendingTasks > div {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  #pendingTasks > div > div:first-child {
+    padding-bottom: 10px;
+    width: 100%;
+  }
+  #pendingTasks > div > div:last-child {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+  }
+  #pendingTasks .manual-task-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
