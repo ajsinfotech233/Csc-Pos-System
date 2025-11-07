@@ -1,1 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSC POS & AEPS Management System</title>
+  
+  <!-- Firebase v8 (consider upgrading to v9+ for modular imports if starting new) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h2>CSC POS &amp; AEPS Management System</h2>
+  </header>
 
+  <!-- Login/Register -->
+  <div class="box hidden" id="authSection">
+    <h3>Login / Register</h3>
+    <input id="email" placeholder="Email" type="email" autocomplete="username" /><br />
+    <input id="password" placeholder="Password" type="password" autocomplete="current-password" /><br />
+    <button onclick="login()">Login</button>
+    <button onclick="register()">Register</button>
+  </div>
+
+  <div id="loadingScreen" style="display:flex;justify-content:center;align-items:center;height:100vh;font-size:20px;">
+    ⏳ Loading...
+  </div>
+
+  <!-- Dashboard -->
+  <div class="box hidden" id="dashboard">
+    <h2 id="welcomeUser" style="margin-bottom:20px;text-align:center;"></h2>
+    <div id="dashboardStats" class="dashboard-grid"></div>
+  </div>
+  
+  <div id="sidebar">
+    <button onclick="showSection('dashboard')">🏠 Dashboard</button>
+    <button onclick="showSection('salesSection')">🧾 Sales</button>
+    <button onclick="showSection('productSection')">📦 Products</button>
+    <button onclick="showSection('customerSection')">👥 Customers</button>
+    <button onclick="showSection('ledgerSection')">📑 Ledger</button>
+    <button onclick="showSection('expenseSection')">💰 Expenses</button>
+    <button onclick="showSection('aepsSection')">💳 AEPS</button>
+    <button onclick="showSection('pendingSection')">⏳ Pending Tasks</button>
+    <button onclick="showSection('reportSection')">📊 Reports</button>
+    <button onclick="showSection('profileSection')">🏬 Shop Profile</button>
+    <hr />
+    <button onclick="logout()">🚪 Logout</button>
+  </div>
+
+  <div id="main">
+    <!-- Sales -->
+    <div class="box" id="salesSection">
+      <h3>Sales / Invoices</h3>
+      <div class="tabs">
+        <button onclick="openSaleTab('newSale')">➕ New Sale</button>
+        <button onclick="openSaleTab('savedInvoices')">🧾 Saved Invoices</button>
+      </div>
+      
+      <!-- New Sale Tab -->
+      <div class="saleTab" id="newSale">
+        <h4>New Sale</h4>
+        <label>Customer:</label>
+        <input id="saleCustSearch" placeholder="Search by Name/Mobile" type="text" onkeyup="liveSearchCustomer()" autocomplete="off" />
+        <div id="custSearchResults" class="search-results"></div>
+        <input type="hidden" id="saleCustomer">
+
+        <label>Product:</label>
+        <input id="saleProdSearch" placeholder="Search Product/Service" type="text" onkeyup="liveSearchProduct()" autocomplete="off" />
+        <div id="prodSearchResults" class="search-results"></div>
+        <input type="hidden" id="saleProduct">
+        <div id="productPriceInfo" style="margin-top:5px; font-weight:bold;"></div>
+
+        <input id="saleQty" placeholder="Quantity" type="number" value="1" min="1" /><br />
+        <input id="saleManualPrice" placeholder="Manual Price (Optional)" type="number" /><br />
+        <textarea id="saleRemark" placeholder="Remark (Optional)"></textarea><br />
+        <label><input id="workComplete" type="checkbox" checked /> Work Complete</label><br />
+        <button onclick="addSaleItem()">Add Item</button>
+
+        <h4>Cart</h4>
+        <ul id="saleCart"></ul>
+        <label>Cash Received:</label><input id="cashReceived" placeholder="Enter Cash" type="number" value="0" /><br />
+        <button onclick="saveInvoice()">Save Invoice</button>
+      </div>
+      
+      <!-- Saved Invoices Tab -->
+      <div class="saleTab hidden" id="savedInvoices">
+        <h4>Invoices</h4>
+        <div class="filters">
+          <input type="text" id="invSearchCustomer" placeholder="Search by Customer / Mobile">
+          <input type="text" id="invSearchProduct" placeholder="Search by Product">
+          <input type="date" id="invSearchFrom">
+          <input type="date" id="invSearchTo">
+          <button onclick="searchInvoices()">🔍 Search</button>
+          <button onclick="loadInvoices()">♻ Reset</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Invoice No</th>
+              <th>Customer</th>
+              <th>Total</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="invoiceList"></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Sales end -->
+
+    <!-- Products -->
+    <div class="hidden box" id="productSection">
+      <h3>Products</h3>
+      <input id="productId" type="hidden" />
+      <input id="productName" placeholder="Product Name" type="text" /><br />
+      <input id="costPrice" placeholder="Cost Price" type="number" /><br />
+      <input id="salePrice" placeholder="Sale Price" type="number" /><br />
+      <input id="unit" placeholder="Unit (e.g., pcs, kg, hr)" type="text" /><br />
+      <button onclick="saveProduct()">Save Product</button>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Cost</th>
+            <th>Sale</th>
+            <th>Unit</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="productList"></tbody>
+      </table>
+    </div>
+
+    <!-- Customers -->
+    <div class="hidden box" id="customerSection">
+      <h3>Customers</h3>
+      <input id="customerId" type="hidden" />
+      <input id="custName" placeholder="Customer Name" type="text" /><br />
+      <input id="custMobile" placeholder="Mobile" type="tel" /><br />
+      <textarea id="custAddress" placeholder="Address"></textarea><br />
+      <button onclick="saveCustomer()">Save Customer</button>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Mobile</th>
+            <th>Pending</th>
+            <th>Advance</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="customerList"></tbody>
+      </table>
+    </div>
+
+    <!-- Ledger -->
+    <div class="hidden box" id="ledgerSection">
+      <h3>Ledger</h3>
+      <div id="ledgerStats">
+        <b>📊 Shop Ledger Summary</b><br><br>
+        👥 Total Customers: <span id="totalCustomers">0</span><br>
+        💳 Total Pending: ₹<span id="totalPending">0</span><br>
+        💰 Total Advance: ₹<span id="totalAdvance">0</span><br><br>
+        📅 Today Sale: ₹<span id="todaySale">0</span><br>
+        📆 This Month Sale: ₹<span id="monthSale">0</span><br><br>
+        📅 Today → Product Profit: ₹<span id="todayProfit">0</span> | Product Cost: ₹<span id="todayCost">0</span> | Expense: ₹<span id="todayExpense">0</span> | ✅ Net: ₹<span id="todayNet">0</span><br><br>
+        📆 This Month → Product Profit: ₹<span id="monthProfit">0</span> | Product Cost: ₹<span id="monthCost">0</span> | Expense: ₹<span id="monthExpense">0</span> | ✅ Net: ₹<span id="monthNet">0</span><br><br>
+        📈 This Year → Product Profit: ₹<span id="yearProfit">0</span> | Product Cost: ₹<span id="yearCost">0</span> | Expense: ₹<span id="yearExpense">0</span> | ✅ Net: ₹<span id="yearNet">0</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Pending</th>
+            <th>Advance</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="ledgerList"></tbody>
+      </table>
+    </div>
+
+    <!-- Expenses -->
+    <div class="hidden box" id="expenseSection">
+      <h3>Expenses</h3>
+      <input id="expTitle" placeholder="Expense Title" type="text" /><br />
+      <input id="expAmount" placeholder="Amount" type="number" /><br />
+      <textarea id="expNote" placeholder="Notes (Optional)"></textarea><br />
+      <button onclick="saveExpense()">Save Expense</button>
+      <ul id="expenseList"></ul>
+    </div>
+
+    <!-- AEPS -->
+    <div class="hidden box" id="aepsSection">
+      <h3>AEPS Transactions</h3>
+      <input id="aepsAadhaar" placeholder="Aadhaar Number" type="text" maxlength="12" /><br />
+      <input id="aepsBank" placeholder="Bank Name" type="text" /><br />
+      <input id="aepsAmount" placeholder="Amount" type="number" /><br />
+      <select id="aepsStatus">
+        <option value="success">Success</option>
+        <option value="fail">Fail</option>
+        <option value="pending">Pending</option>
+      </select><br />
+      <button onclick="saveAeps()">Save AEPS Transaction</button>
+      <ul id="aepsList"></ul>
+    </div>
+
+    <!-- Pending Tasks -->
+    <div class="hidden box" id="pendingSection">
+      <h3>Pending Tasks</h3>
+      <div class="manual-task-form">
+        <input type="text" id="manualTaskTitle" placeholder="Manual Task Title">
+        <input type="text" id="manualTaskNote" placeholder="Note (optional)">
+        <input type="date" id="manualTaskDeadline">
+        <button onclick="addManualTask()">➕ Add Task</button>
+      </div>
+      <div id="pendingTasks"></div>
+    </div>
+
+    <!-- Reports -->
+    <div class="hidden box" id="reportSection">
+      <h3>Reports</h3>
+      <div id="reportBox" class="report-summary"></div>
+      <h4>Expenses Report</h4>
+      <div id="expenseReport" class="report-summary"></div>
+      <h4>AEPS Summary</h4>
+      <div id="aepsReport" class="report-summary"></div>
+    </div>
+
+    <!-- Shop Profile -->
+    <div class="hidden box" id="profileSection">
+      <h3>Shop Profile</h3>
+      <input id="shopName" placeholder="Shop Name" type="text" /><br />
+      <input id="gstNumber" placeholder="GST Number" type="text" /><br />
+      <input id="mobile" placeholder="Shop Mobile" type="tel" /><br />
+      <textarea id="address" placeholder="Shop Address"></textarea><br />
+      <button id="saveShopBtn" onclick="saveShopProfile()">Save Profile</button>
+    </div>
+  </div>
+
+  <!-- Custom JavaScript -->
+  <script src="js/script.js"></script>
+</body>
+</html>
